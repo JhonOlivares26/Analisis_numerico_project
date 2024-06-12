@@ -1,34 +1,60 @@
 import tkinter as tk
+from tkinter import ttk, messagebox
 import numpy as np
 
 class MetodosNumericosApp:
     def __init__(self, root):
         self.root = root
         self.root.title("Métodos Numéricos")
-        root.geometry("600x400")
 
-        self.A_entry = tk.Entry(root, width=50)
-        self.b_entry = tk.Entry(root)
-        self.x0_entry = tk.Entry(root)
-        self.tol_entry = tk.Entry(root)
+        self.create_widgets()
 
-        tk.Label(root, text="Matriz A (separada por comas):").pack()
-        self.A_entry.pack()
-        tk.Label(root, text="Vector b (separado por comas):").pack()
-        self.b_entry.pack()
-        tk.Label(root, text="Vector inicial x0 (separado por comas):").pack()
-        self.x0_entry.pack()
-        tk.Label(root, text="Tolerancia:").pack()
-        self.tol_entry.pack()
+    def create_widgets(self):
+        info_text = [
+            "Ingrese la matriz A con los valores separados por comas y las filas separadas por llaves (ejemplo para matriz 3x3: [1,2,3],[2,3,1],[3,2,1])",
+            "Ingrese los valores del vector B separados por coma (ejemplo: 3,2,1)",
+            "Ingrese el vector inicial x0 con valores de 0 por cada fila del vector a (ejemplo para vector 3x3: 0,0,0)"
+        ]
+        self.input_frame = ttk.LabelFrame(self.root, text="Informacion de uso")
+        self.input_frame.pack(padx=10, pady=10, fill="x")
 
-        self.eliminacion_gaussiana_button = tk.Button(root, text="Eliminación Gaussiana", command=self.run_eliminacion_gaussiana)
-        self.gauss_seidel_button = tk.Button(root, text="Gauss-Seidel", command=self.run_gauss_seidel)
+        for i, text in enumerate(info_text):
+            ttk.Label(self.input_frame, text=text).grid(row=i, column=0, padx=5, pady=5, sticky="w")
 
-        self.eliminacion_gaussiana_button.pack(pady=5)
-        self.gauss_seidel_button.pack(pady=5)
 
-        self.result_text = tk.Text(root, height=10, width=70)
-        self.result_text.pack(pady=10)
+        self.input_frame = ttk.LabelFrame(self.root, text="Datos de Entrada")
+        self.input_frame.pack(padx=10, pady=10, fill="x")
+
+        ttk.Label(self.input_frame, text="Matriz A:").grid(row=0, column=0, padx=5, pady=5, sticky="e")
+        self.A_entry = ttk.Entry(self.input_frame, width=50)
+        self.A_entry.grid(row=0, column=1, padx=5, pady=5)
+
+        ttk.Label(self.input_frame, text="Vector B:").grid(row=1, column=0, padx=5, pady=5, sticky="e")
+        self.b_entry = ttk.Entry(self.input_frame)
+        self.b_entry.grid(row=1, column=1, padx=5, pady=5)
+
+        ttk.Label(self.input_frame, text="Vector inicial x0:").grid(row=2, column=0, padx=5, pady=5, sticky="e")
+        self.x0_entry = ttk.Entry(self.input_frame)
+        self.x0_entry.grid(row=2, column=1, padx=5, pady=5)
+
+        ttk.Label(self.input_frame, text="Tolerancia:").grid(row=3, column=0, padx=5, pady=5, sticky="e")
+        self.tol_entry = ttk.Entry(self.input_frame)
+        self.tol_entry.grid(row=3, column=1, padx=5, pady=5)
+
+        self.button_frame = ttk.Frame(self.root)
+        self.button_frame.pack(padx=10, pady=10, fill="x")
+
+        self.eliminacion_gaussiana_button = ttk.Button(self.button_frame, text="Eliminación Gaussiana", command=self.run_eliminacion_gaussiana)
+        self.eliminacion_gaussiana_button.grid(row=0, column=0, padx=5, pady=5)
+
+        self.gauss_seidel_button = ttk.Button(self.button_frame, text="Gauss-Seidel", command=self.run_gauss_seidel)
+        self.gauss_seidel_button.grid(row=0, column=1, padx=5, pady=5)
+
+        self.output_frame = ttk.LabelFrame(self.root, text="Resultados")
+        self.output_frame.pack(padx=10, pady=10, fill="both", expand=True)
+
+        self.result_text = tk.Text(self.output_frame, height=10, width=70)
+        self.result_text.pack(padx=5, pady=5, fill="both", expand=True)
 
     def run_eliminacion_gaussiana(self):
         self.result_text.delete(1.0, tk.END)
@@ -72,7 +98,7 @@ def Eliminacion_Gaussiana(A, b):
 
     return x
 
-def Gauss_seidel(A, b, xo, tol):
+def Gauss_seidel(A, b, x0, tol):
     n = len(b)
     x1 = np.zeros(n)
     norm = tol + 1  
@@ -89,4 +115,3 @@ def Gauss_seidel(A, b, xo, tol):
         norm = np.linalg.norm(x1 - x0, np.inf)
         iteraciones += 1
     return x1
-
