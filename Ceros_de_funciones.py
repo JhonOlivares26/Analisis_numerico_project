@@ -1,5 +1,6 @@
 import sympy as sp
 import numpy as np
+import tkinter as tk
 import matplotlib.pyplot as plt
 from math import factorial
 import math
@@ -66,3 +67,78 @@ def Secante(f, x0, xi, tol):
         i += 1
     print(f'La solución es: {S} con {i} iteraciones fueron:')
     return S
+
+class CerosDeFuncionesApp:
+    def __init__(self, root):
+        self.root = root
+        self.root.title("Ceros de Funciones")
+        root.geometry("600x300")
+
+        # Crear campos de entrada para los parámetros
+        self.f_entry = tk.Entry(root)
+        self.a_entry = tk.Entry(root)
+        self.b_entry = tk.Entry(root)
+        self.tol_entry = tk.Entry(root)
+        self.x0_entry = tk.Entry(root)
+        self.xi_entry = tk.Entry(root)
+
+        # Crear botones para ejecutar las funciones
+        self.biseccion_button = tk.Button(root, text="Bisección", command=self.run_biseccion)
+        self.newton_button = tk.Button(root, text="Newton", command=self.run_newton)
+        self.posicion_falsa_button = tk.Button(root, text="Posición Falsa", command=self.run_posicion_falsa)
+        self.secante_button = tk.Button(root, text="Secante", command=self.run_secante)
+
+        # Posicionar los campos de entrada y los botones
+        self.f_entry.pack()
+        self.a_entry.pack()
+        self.b_entry.pack()
+        self.tol_entry.pack()
+        self.x0_entry.pack()
+        self.xi_entry.pack()
+        self.biseccion_button.pack()
+        self.newton_button.pack()
+        self.posicion_falsa_button.pack()
+        self.secante_button.pack()
+
+    def run_biseccion(self):
+        # Obtener los valores de los campos de entrada
+        f = self.f_entry.get()
+        a = float(self.a_entry.get())
+        b = float(self.b_entry.get())
+        tol = float(self.tol_entry.get())
+
+        # Ejecutar la función biseccion y mostrar los resultados
+        c = biseccion(f, a, b, tol)
+        print(c)
+
+    def run_newton(self):
+        # Obtener los valores de los campos de entrada
+        f = self.f_entry.get()
+        x0 = float(self.x0_entry.get())
+        tol = float(self.tol_entry.get())
+
+        # Ejecutar la función newton y mostrar los resultados
+        x1 = newton(f, x0, tol)
+        print(x1)
+
+    def run_posicion_falsa(self):
+        # Obtener los valores de los campos de entrada
+        f = self.f_entry.get()
+        a = float(self.a_entry.get())
+        b = float(self.b_entry.get())
+        tol = float(self.tol_entry.get())
+
+        # Ejecutar la función posicion_falsa y mostrar los resultados
+        c = posicion_falsa(f, a, b, tol)
+        print(c)
+
+    def run_secante(self):
+        # Obtener los valores de los campos de entrada
+        f = self.f_entry.get()
+        x0 = float(self.x0_entry.get())
+        xi = float(self.xi_entry.get())
+        tol = float(self.tol_entry.get())
+
+        # Ejecutar la función Secante y mostrar los resultados
+        S = Secante(f, x0, xi, tol)
+        print(S)

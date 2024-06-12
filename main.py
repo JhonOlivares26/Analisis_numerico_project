@@ -1,5 +1,6 @@
 import tkinter as tk
 from Ecuaciones_Diferenciales import DifferentialEquationsApp
+from Ceros_de_funciones import CerosDeFuncionesApp
 import Ecuaciones_Diferenciales
 import Interpolacion_y_ajuste_de_curvas
 import Sistemas_de_Ecuaciones_Lineales
@@ -16,8 +17,9 @@ class MainApp:
         def method1():
             print("Series de taylor")
 
-        def method2():
-            print("Ceros de funciones")
+        def open_Ceros_de_funcione_app():
+            new_window = tk.Toplevel(self.root)
+            CerosDeFuncionesApp(new_window)
 
         def method3():
             print("Sistemas de ecuaciones lineales")
@@ -27,7 +29,7 @@ class MainApp:
 
         # Crear botones para los métodos numéricos
         button1 = tk.Button(root, text="Series de taylor", command=method1)
-        button2 = tk.Button(root, text="Ceros de funciones", command=method2)
+        button2 = tk.Button(root, text="Ceros de funciones", command=open_Ceros_de_funcione_app)
         button3 = tk.Button(root, text="Sistemas de ecuaciones lineales", command=method3)
         button4 = tk.Button(root, text="Interpolación y ajuste de curvas", command=method4)
         button5 = tk.Button(root, text="Ecuaciones Diferenciales", command=self.open_differential_equations_app)
