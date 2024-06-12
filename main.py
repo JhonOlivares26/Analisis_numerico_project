@@ -4,9 +4,6 @@ from Ceros_de_funciones import CerosDeFuncionesApp
 from Sistemas_de_Ecuaciones_Lineales import MetodosNumericosApp
 from Series_de_taylor import SeriesTaylorApp
 from Interpolacion_y_ajuste_de_curvas import InterpolationApp
-import Ecuaciones_Diferenciales
-import Interpolacion_y_ajuste_de_curvas
-import Sistemas_de_Ecuaciones_Lineales
 
 
 class MainApp:

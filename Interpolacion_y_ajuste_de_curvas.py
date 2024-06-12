@@ -32,7 +32,7 @@ def Pol_simple(x, y):
         for j in range(1, n):
             M_p[i, j] = M_p[i, j - 1] * x[i]
     a_i = Gauss_s(M_p, y, x0, 1e-6)
-    return a_i
+    return np.flip(a_i)
 
 def Lagrange(xd, yd):
     n = len(xd)
@@ -56,7 +56,7 @@ def min_c(x, y):
     n = len(x)
     a0 = (Sf * Sx2 - Sx * Sxy) / (n * Sx2 - Sx ** 2)
     a1 = (n * Sxy - Sx * Sf) / (n * Sx2 - Sx ** 2)
-    return a0, a1
+    return a1, a0
 
 class InterpolationApp:
     def __init__(self, root):
@@ -119,7 +119,7 @@ class InterpolationApp:
         # Manejar diferentes tipos de polinomios
         if isinstance(poly, np.ndarray):  # Polinomio simple o mínimos cuadrados
             y_plot = np.polyval(poly, x_plot)
-            label = f'Polinomio: {poly}'
+            label = f'Polinomio: {np.flip(poly)}'  # Invierte el orden de los coeficientes para que coincida con np.poly1d
         else:  # Polinomio de Lagrange (SymPy)
             y_plot = [poly.evalf(subs={'x': xi}) for xi in x_plot]
             label = str(poly)
@@ -154,7 +154,7 @@ class InterpolationApp:
 
         # Mostrar el resultado en el widget de texto
         self.result_text.delete(1.0, tk.END)
-        self.result_text.insert(tk.END, f"Polinomio Simple: {poly}\n")
+        self.result_text.insert(tk.END, f"Polinomio Simple: {np.poly1d(poly)}\n")
 
         # Plotear la solución
         self.plot_solution(x_vals, y_vals, poly, self.x_approx_entry.get())
@@ -180,15 +180,14 @@ class InterpolationApp:
         y_vals = list(map(float, self.y_entry.get().split(',')))
 
         # Calcular los coeficientes de mínimos cuadrados
-        a0, a1 = min_c(x_vals, y_vals)
+        a1, a0 = min_c(x_vals, y_vals)
 
         # Crear el polinomio de mínimos cuadrados
-        poly = np.array([a0, a1])
+        poly = np.array([a1, a0])
 
         # Mostrar el resultado en el widget de texto
         self.result_text.delete(1.0, tk.END)
-        self.result_text.insert(tk.END, f"Polinomio de Mínimos Cuadrados: y = {a0} + {a1}*x\n")
+        self.result_text.insert(tk.END, f"Polinomio de Mínimos Cuadrados: y = {a1}x + {a0}\n")
 
         # Plotear la solución
         self.plot_solution(x_vals, y_vals, poly, self.x_approx_entry.get())
-
