@@ -4,7 +4,6 @@ from Ceros_de_funciones import CerosDeFuncionesApp
 import Ecuaciones_Diferenciales
 import Interpolacion_y_ajuste_de_curvas
 import Sistemas_de_Ecuaciones_Lineales
-import Sistemas_ecuaciones_lineales
 
 
 class MainApp:
