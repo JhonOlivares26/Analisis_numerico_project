@@ -1,52 +1,92 @@
-import time
+import tkinter as tk
 import numpy as np
-from scipy.linalg import eigvals
 
-def Eliminacion_Gaussiana(A,b):
+class MetodosNumericosApp:
+    def __init__(self, root):
+        self.root = root
+        self.root.title("Métodos Numéricos")
+        root.geometry("600x400")
+
+        self.A_entry = tk.Entry(root, width=50)
+        self.b_entry = tk.Entry(root)
+        self.x0_entry = tk.Entry(root)
+        self.tol_entry = tk.Entry(root)
+
+        tk.Label(root, text="Matriz A (separada por comas):").pack()
+        self.A_entry.pack()
+        tk.Label(root, text="Vector b (separado por comas):").pack()
+        self.b_entry.pack()
+        tk.Label(root, text="Vector inicial x0 (separado por comas):").pack()
+        self.x0_entry.pack()
+        tk.Label(root, text="Tolerancia:").pack()
+        self.tol_entry.pack()
+
+        self.eliminacion_gaussiana_button = tk.Button(root, text="Eliminación Gaussiana", command=self.run_eliminacion_gaussiana)
+        self.gauss_seidel_button = tk.Button(root, text="Gauss-Seidel", command=self.run_gauss_seidel)
+
+        self.eliminacion_gaussiana_button.pack(pady=5)
+        self.gauss_seidel_button.pack(pady=5)
+
+        self.result_text = tk.Text(root, height=10, width=70)
+        self.result_text.pack(pady=10)
+
+    def run_eliminacion_gaussiana(self):
+        self.result_text.delete(1.0, tk.END)
+        try:
+            A = np.array(eval("[" + self.A_entry.get() + "]"))
+            b = np.array(eval("[" + self.b_entry.get() + "]"))
+            result = Eliminacion_Gaussiana(A, b)
+        except Exception as e:
+            result = f"Error: {e}"
+        self.result_text.insert(tk.END, result)
+
+    def run_gauss_seidel(self):
+        self.result_text.delete(1.0, tk.END)
+        try:
+            A = np.array(eval("[" + self.A_entry.get() + "]"))
+            b = np.array(eval("[" + self.b_entry.get() + "]"))
+            x0 = np.array(eval("[" + self.x0_entry.get() + "]"))
+            tol = float(self.tol_entry.get())
+            result = Gauss_seidel(A, b, x0, tol)
+        except Exception as e:
+            result = f"Error: {e}"
+        self.result_text.insert(tk.END, result)
+
+def Eliminacion_Gaussiana(A, b):
     n = len(b)
     x = np.zeros(n)
-    for k in range(0,n-1):
-        for i in range(k+1,n):
-            lam=A[i,k]/(A[k,k])
-            A[i,k:n]=A[i,k:n]-lam*A[k,k:n]
-            b[i]=b[i]-lam*b[k]
-    for k in range(n-1,-1,-1):
-        x[k] = (b[k]-np.dot(A[k,k+1:n],x[k+1:n]))/(A[k,k])
-    print("La solucion es: ",x)
+
+    for k in range(n-1):
+        max_index = np.argmax(abs(A[k:, k])) + k  
+        if max_index != k:
+            A[[k, max_index]] = A[[max_index, k]] 
+            b[[k, max_index]] = b[[max_index, k]]  
+        
+        for i in range(k+1, n):
+            lam = A[i, k] / A[k, k]
+            A[i, k:n] = A[i, k:n] - lam * A[k, k:n]
+            b[i] = b[i] - lam * b[k]
+    
+    for k in range(n-1, -1, -1):
+        x[k] = (b[k] - np.dot(A[k, k+1:n], x[k+1:n])) / A[k, k]
+
     return x
 
-def Gauss_seidel(a, b, xo, tol=1e-6):
-    D = np.diag(np.diag(a))
-    L = D - np.tril(a)
-    U = D - np.triu(a)
-    Tg = np.dot(np.linalg.inv(D - L), U)
-    Cg = np.dot(np.linalg.inv(D - L), b)
-    lam, vec = np.linalg.eig(Tg)
-    radio = max(abs(lam))
-    if radio < 1:
-        x1 = np.dot(Tg, xo) + Cg
-        iteraciones = 1
-        while max(np.abs((x1 - xo))) > tol:
-            xo = x1
-            x1 = np.dot(Tg, xo) + Cg
-            iteraciones += 1
-        return x1
-    else:
-        print("El sistema iterativo no converge a la solucion unica del sistema")
+def Gauss_seidel(A, b, xo, tol):
+    n = len(b)
+    x1 = np.zeros(n)
+    norm = tol + 1  
+    iteraciones = 0
 
-def Gauss_sum(A,B,X0,tol):
-    n=len(B)
-    norm = 2
-    cont = 0
-    M = 50
-    X1 = np.zeros(n)
-    while norm>= tol or cont >M:
+    while norm > tol:
+        x0 = x1.copy() 
         for i in range(n):
-            aux = 0
+            sigma = 0
             for j in range(n):
-                if i != j:
-                    aux = aux-A[i,j]*X0[j]
-            X1[i]=(B[i]+aux)/A[i,i]
-            print(X1,X0)
-            norm = np.max(np.abs(X1-X0))
-            X0=X1
+                if j != i:
+                    sigma += A[i, j] * x1[j]
+            x1[i] = (b[i] - sigma) / A[i, i]
+        norm = np.linalg.norm(x1 - x0, np.inf)
+        iteraciones += 1
+    return x1
+
