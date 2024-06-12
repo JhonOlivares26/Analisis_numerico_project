@@ -63,7 +63,7 @@ class InterpolationApp:
     def __init__(self, root):
         self.root = root
         self.root.title("Interpolación y Ajuste de Curvas")
-        root.geometry("1400x600")
+        self.root.geometry("1400x600")
 
         # Crear un marco para los controles
         control_frame = ttk.LabelFrame(root, text="Datos de Entrada")
@@ -71,7 +71,7 @@ class InterpolationApp:
 
         # Crear un marco para la gráfica
         self.graph_frame = ttk.LabelFrame(root, text="Gráfica")
-        self.graph_frame.pack(side=tk.RIGHT, fill=tk.BOTH, expand=True, padx=10, pady=10)
+        self.graph_frame.pack(side=tk.LEFT, fill=tk.BOTH, expand=True, padx=10, pady=10)
 
         # Crear etiquetas y campos de entrada para los parámetros
         ttk.Label(control_frame, text="Datos x (separados por comas):").grid(row=0, column=0, padx=5, pady=5, sticky="e")
@@ -96,14 +96,25 @@ class InterpolationApp:
         self.min_cuad_button = ttk.Button(control_frame, text="Mínimos Cuadrados", command=self.run_min_cuad)
         self.min_cuad_button.grid(row=4, column=0, columnspan=2, padx=5, pady=10, sticky="ew")
 
+        instructions = (
+            "Instrucciones de uso:\n"
+            "1. Ingrese los datos x e y separados por comas en los campos correspondientes.\n"
+            "2. Si desea aproximar un valor, ingrese el valor en el campo 'Dato a aproximar'.\n"
+            "3. Seleccione el método de interpolación o ajuste de curvas que desea utilizar.\n"
+            "4. Haga clic en el botón correspondiente al método seleccionado.\n"
+            "5. Los resultados se mostrarán en el área de texto a la derecha y la gráfica se actualizará automáticamente."
+        )
+        self.instructions_label = ttk.Label(control_frame, text=instructions)
+        self.instructions_label.grid(row=5, column=0, columnspan=2, padx=5, pady=10)
+
         # Crear un widget Text para mostrar los resultados
         self.result_text = tk.Text(self.graph_frame, height=10, width=60)
-        self.result_text.pack(side=tk.LEFT, fill="both", expand=True)
+        self.result_text.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
 
         # Inicializar la variable del lienzo de la gráfica
         self.fig, self.ax = plt.subplots()
         self.canvas = FigureCanvasTkAgg(self.fig, master=self.graph_frame)
-        self.canvas.get_tk_widget().pack(side=tk.RIGHT, fill="both", expand=True)
+        self.canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=True)
 
     def plot_solution(self, x_vals, y_vals, poly, method_name, x_approx=None):
         # Limpiar la gráfica

@@ -73,6 +73,9 @@ class DifferentialEquationsApp:
         self.euler_button = ttk.Button(control_frame, text="Euler", command=self.run_euler)
         self.euler_button.grid(row=7, column=1, padx=5, pady=10, sticky="ew")
 
+        self.instrucciones_button = ttk.Button(control_frame, text="Instrucciones", command=self.mostrar_instrucciones)
+        self.instrucciones_button.grid(row=7, column=2, padx=5, pady=10, sticky="ew")
+
         self.result_text = tk.Text(self.graph_frame, height=10, width=60)
         self.result_text.pack(side=tk.LEFT, fill="both", expand=True)
 
@@ -203,10 +206,46 @@ class DifferentialEquationsApp:
         self.result_text.insert(tk.END, f"t: {t_vals}\n\ny: {y_vals}\n")
         self.plot_solution(t_vals, y_vals, method_names)
 
-if __name__ == "__main__":
-    root = tk.Tk()
-    app = DifferentialEquationsApp(root)
-    root.mainloop()
+    def mostrar_instrucciones(self):
+        instrucciones = """
+        Instrucciones de Uso:
+    
+        1. Función f(t, y) - obligatorio:
+            - Ingrese la función f(t, y) en este campo. Por ejemplo:
+              - t + y
+              - t**2 + y
+              - y * sp.exp(t)
+            - Utilice 'sp.' antes de funciones especiales de sympy, por ejemplo:
+              - sp.exp(y)
+              - sp.sin(t)
+    
+        2. Función g(t, y) - opcional:
+            - Ingrese la función g(t, y) en este campo siguiendo las mismas reglas que para f(t, y).
+    
+        3. Función h(t, y) - opcional:
+            - Ingrese la función h(t, y) en este campo siguiendo las mismas reglas que para f(t, y).
+    
+        4. Valor inicial t (a) - obligatorio:
+            - Ingrese el valor inicial t en este campo. Debe ser un número real.
+    
+        5. Valor final t (b) - obligatorio:
+            - Ingrese el valor final t en este campo. Debe ser un número real mayor que el valor inicial t.
+    
+        6. Tamaño de paso h - obligatorio:
+            - Ingrese el tamaño de paso h en este campo. Debe ser un número real positivo.
+    
+        7. Valores iniciales y0 (separados por comas) - obligatorio:
+            - Ingrese los valores iniciales y0 separados por comas. Cada valor se asignará a la función correspondiente en el orden en que se ingresaron.
+    
+        8. Botones:
+            - Runge Kutta: Ejecuta el método de Runge Kutta con las funciones y parámetros ingresados.
+            - Euler: Ejecuta el método de Euler con las funciones y parámetros ingresados.
+            - Instrucciones: Muestra esta ventana de instrucciones.
+    
+        Nota: Asegúrese de ingresar funciones válidas y valores numéricos correctos antes de ejecutar los métodos.
+        """
+
+        messagebox.showinfo("Instrucciones de Uso", instrucciones)
 
 
 
