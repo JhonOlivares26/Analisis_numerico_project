@@ -1,3 +1,4 @@
+import math
 import tkinter as tk
 from tkinter import ttk, messagebox
 import sympy as sp
@@ -29,10 +30,16 @@ class SeriesTaylorApp:
     def __init__(self, root):
         self.root = root
         self.root.title("Serie de Taylor App")
+        root.geometry("600x700")
         
         self.create_widgets()
 
     def create_widgets(self):
+        self.input_frame = ttk.LabelFrame(self.root, text="Informacion de uso")
+        self.input_frame.pack(padx=10, pady=10, fill="x")
+
+        ttk.Label(self.input_frame, text="La funcion se debe ingresar con los datos completos y las incognitas en terminos de X (ejemplo: 2*x + 4*x), \n para ingresar exponenciales, logaritmos,etc, se recomienda Sympy con el prefijo sp(ej sp.exp(x)) \n El valor xp es opcional para calcular las cota, si no se desea calcular la cota se puede dejar vacio").grid(row=0, column=0, padx=5, pady=5, sticky="e")
+        
         self.input_frame = ttk.LabelFrame(self.root, text="Datos de Entrada")
         self.input_frame.pack(padx=10, pady=10, fill="x")
 
@@ -44,33 +51,42 @@ class SeriesTaylorApp:
         self.x0_entry = ttk.Entry(self.input_frame)
         self.x0_entry.grid(row=1, column=1, padx=5, pady=5)
 
-        ttk.Label(self.input_frame, text="Grado del Polinomio:").grid(row=2, column=0, padx=5, pady=5, sticky="e")
+        ttk.Label(self.input_frame, text="Valor de xp:").grid(row=2, column=0, padx=5, pady=5, sticky="e")
+        self.xp_entry = ttk.Entry(self.input_frame)
+        self.xp_entry.grid(row=2, column=1, padx=5, pady=5)
+
+        ttk.Label(self.input_frame, text="Grado del Polinomio:").grid(row=3, column=0, padx=5, pady=5, sticky="e")
         self.n_entry = ttk.Entry(self.input_frame)
-        self.n_entry.grid(row=2, column=1, padx=5, pady=5)
+        self.n_entry.grid(row=3, column=1, padx=5, pady=5)
 
         self.calculate_button = ttk.Button(self.input_frame, text="Calcular", command=self.calculate)
-        self.calculate_button.grid(row=3, columnspan=2, pady=10)
+        self.calculate_button.grid(row=4, columnspan=2, pady=10)
 
         self.output_frame = ttk.LabelFrame(self.root, text="Resultados")
         self.output_frame.pack(padx=10, pady=10, fill="both", expand=True)
 
-        self.poly_label = ttk.Label(self.output_frame, text="", wraplength=600)
+        self.poly_label = ttk.Label(self.output_frame, text="", wraplength=400)
         self.poly_label.pack(pady=10)
 
         self.fig, self.ax = plt.subplots()
         self.canvas = FigureCanvasTkAgg(self.fig, master=self.output_frame)
-        self.canvas.get_tk_widget().pack(fill="both", expand=True)
+        self.canvas.get_tk_widget().pack(fill="both")
 
     def calculate(self):
         try:
             f_str = self.func_entry.get()
+            f = sp.sympify(f_str, {"x": x, "sp": sp, "np": np, "math": math})
             x0 = float(self.x0_entry.get())
+            xp = self.xp_entry.get()
             n = int(self.n_entry.get())
 
-            f = sp.sympify(f_str, locals={"ln": sp.ln})
-            
             poly = S_Taylor(f, x0, n)
-            self.poly_label.config(text=f"Polinomio de Taylor: {sp.pretty(poly)}")
+            if(xp != ""):
+                xp2 = float(xp)
+                cot = Cota_t(f,x0,xp2,n)
+                self.poly_label.config(text=f"Polinomio de Taylor: {sp.pretty(poly)} \n Cota evaluada en {xp2}: {sp.pretty(cot)}")
+            else:
+              self.poly_label.config(text=f"Polinomio de Taylor: {sp.pretty(poly)}")
 
             self.ax.clear()
             f_lambdified = sp.lambdify(x, f, modules=['numpy'])

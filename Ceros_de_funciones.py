@@ -76,7 +76,7 @@ class CerosDeFuncionesApp:
         self.input_frame = ttk.LabelFrame(self.root, text="Informacion de uso")
         self.input_frame.pack(padx=10, pady=10, fill="x")
 
-        ttk.Label(self.input_frame, text="La funcion se debe ingresar con los datos completa y las incognitas en terminos de X (ejemplo: 2*x + 4*x), \n para ingresar exponenciales, logaritmos,etc, se recomienda Sympy con el prefijo sp(ej sp.exp(x))").grid(row=0, column=0, padx=5, pady=5, sticky="e")
+        ttk.Label(self.input_frame, text="La funcion se debe ingresar con los datos completos y las incognitas en terminos de X (ejemplo: 2*x + 4*x), \n para ingresar exponenciales, logaritmos,etc, se recomienda Sympy con el prefijo sp(ej sp.exp(x))").grid(row=0, column=0, padx=5, pady=5, sticky="e")
         ttk.Label(self.input_frame, text="El programa para calcular con newton,para el valor X0 se calcula el promedio que se ingrese en los campos a y b,\n para secante, el valor X0 y X1 son los valores ingresados en a y b respectivamente").grid(row=2, column=0, padx=5, pady=5, sticky="e") 
 
         self.input_frame = ttk.LabelFrame(self.root, text="Datos de Entrada")
