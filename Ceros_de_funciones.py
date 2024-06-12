@@ -17,7 +17,7 @@ def biseccion(f, a, b, tol):
                 b = c
             else:
                 a = c
-        return "Resultado: {} en {} iteraciones".format(c, i)
+        return "Resultado con biseccion: {} en {} iteraciones".format(c, i)
 
 def newton(f_expr, x0, tol):
     df_expr = sp.diff(f_expr, x)
@@ -33,7 +33,7 @@ def newton(f_expr, x0, tol):
             break
         x0 = x1
         i += 1
-    return "Resultado: {} en {} iteraciones".format(x1, i)
+    return "Resultado con newton: {} en {} iteraciones".format(x1, i)
 
 def posicion_falsa(f, a, b, tol):
     if f(a) * f(b) > 0:
@@ -49,7 +49,7 @@ def posicion_falsa(f, a, b, tol):
             else:
                 a = c
             i += 1
-        return "Resultado: {} en {} iteraciones".format(c, i)
+        return "Resultado con posicion falsa: {} en {} iteraciones".format(c, i)
 
 def secante(f, x0, x1, tol):
     i = 0
@@ -62,15 +62,14 @@ def secante(f, x0, x1, tol):
             break
         x0, x1 = x1, x2
         i += 1
-    return "Resultado: {} en {} iteraciones".format(x2, i)
+    return "Resultado con secante: {} en {} iteraciones".format(x2, i)
 
 class CerosDeFuncionesApp:
     def __init__(self, root):
         self.root = root
         self.root.title("Ceros de Funciones")
-        root.geometry("600x800")
+        root.geometry("600x600")
 
-        # Crear campos de entrada para los parámetros
         self.f_entry = tk.Entry(root, width=50)
         self.a_entry = tk.Entry(root)
         self.b_entry = tk.Entry(root)
@@ -78,33 +77,29 @@ class CerosDeFuncionesApp:
         self.x0_entry = tk.Entry(root)
         self.xi_entry = tk.Entry(root)
 
-        # Etiquetas para los campos de entrada
         tk.Label(root, text="Función (en términos de x):").pack()
         self.f_entry.pack()
-        tk.Label(root, text="a (para métodos que lo usan):").pack()
+        tk.Label(root, text="a (para Biseccion y Falsa posicion):").pack()
         self.a_entry.pack()
-        tk.Label(root, text="b (para métodos que lo usan):").pack()
+        tk.Label(root, text="b (para Biseccion y Falsa posicion):").pack()
         self.b_entry.pack()
         tk.Label(root, text="Tolerancia:").pack()
         self.tol_entry.pack()
-        tk.Label(root, text="x0 (para métodos que lo usan):").pack()
+        tk.Label(root, text="x0 (para Newton y Secante):").pack()
         self.x0_entry.pack()
-        tk.Label(root, text="xi (para método Secante):").pack()
+        tk.Label(root, text="xi (para Secante):").pack()
         self.xi_entry.pack()
 
-        # Crear botones para ejecutar las funciones
         self.biseccion_button = tk.Button(root, text="Bisección", command=self.run_biseccion)
         self.newton_button = tk.Button(root, text="Newton", command=self.run_newton)
         self.posicion_falsa_button = tk.Button(root, text="Posición Falsa", command=self.run_posicion_falsa)
         self.secante_button = tk.Button(root, text="Secante", command=self.run_secante)
 
-        # Posicionar los botones
         self.biseccion_button.pack(pady=5)
         self.newton_button.pack(pady=5)
         self.posicion_falsa_button.pack(pady=5)
         self.secante_button.pack(pady=5)
 
-        # Área para mostrar los resultados
         self.result_text = tk.Text(root, height=10, width=70)
         self.result_text.pack(pady=10)
 
