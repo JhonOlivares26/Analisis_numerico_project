@@ -94,24 +94,29 @@ class DifferentialEquationsApp:
         self.canvas.get_tk_widget().pack(fill=tk.BOTH, expand=True)
 
     def run_runge_kutta(self):
-        # Limpiar el contenido del widget de texto
-        self.result_text.delete(1.0, tk.END)
-
-        # Obtener los valores de los campos de entrada
+        # Obtain the values from the entry fields
         f_str = self.f_entry.get()
         a = float(self.a_entry.get())
         b = float(self.b_entry.get())
         h = float(self.h_entry.get())
         y0 = list(map(float, self.y0_entry.get().split(',')))
 
-        # Convertir la cadena de texto en una función
-        t, y = sp.symbols('t y')
-        f_expr = sp.sympify(f_str)
-        f_lambda = sp.lambdify((t, y), f_expr, 'numpy')
+        # Replace 'np.exp' with 'exp' in the string
+        f_str = f_str.replace('np.exp', 'exp')
 
-        # Ejecutar la función RungeKutta y mostrar los resultados
-        t_vals, y_vals = RungeKutta(f_lambda, a, b, h, y0)
-        self.result_text.insert(tk.END, f"Resultados de Runge Kutta:\nt: {t_vals}\ny: {y_vals}\n")
+        # Convert the string into a sympy expression
+        t, y = sp.symbols('t y')  # Define the symbols
+        f_expr = sp.sympify(f_str)  # Convert the string into a sympy expression
+        f_lambda = sp.lambdify((t, y), f_expr, modules=['numpy'])  # Convert the expression into a lambda function
+
+        # Function f adapted to work with numpy
+        def f(t_val, y_val):
+            return f_lambda(t_val, y_val)
+
+        # Execute the RungeKutta function and display the results
+        t_vals, y_vals = RungeKutta(f, a, b, h, y0)
+        self.result_text.delete(1.0, tk.END)
+        self.result_text.insert(tk.END, f"t: {t_vals}\n\ny: {y_vals}\n")
         self.plot_solution(t_vals, y_vals, "Runge Kutta")
 
     def run_euler(self):
@@ -125,6 +130,9 @@ class DifferentialEquationsApp:
         h = float(self.h_entry.get())
         y0 = list(map(float, self.y0_entry.get().split(',')))
 
+        # Replace 'np.exp' with 'exp' in the string
+        f_str = f_str.replace('np.exp', 'exp')
+
         # Convertir la cadena de texto en una función
         t, y = sp.symbols('t y')
         f_expr = sp.sympify(f_str)
@@ -134,11 +142,3 @@ class DifferentialEquationsApp:
         t_vals, y_vals = Euler(f_lambda, a, b, h, y0)
         self.result_text.insert(tk.END, f"Resultados de Euler:\nt: {t_vals}\ny: {y_vals}\n")
         self.plot_solution(t_vals, y_vals, "Euler")
-
-
-
-
-
-
-
-
