@@ -31,112 +31,183 @@ class DifferentialEquationsApp:
     def __init__(self, root):
         self.root = root
         self.root.title("Ecuaciones Diferenciales")
-        self.root.geometry("1000x600")  # Ajustar el tamaño de la ventana
+        self.root.geometry("1000x600")
 
-        # Crear un marco para los controles
         control_frame = ttk.LabelFrame(self.root, text="Datos de Entrada")
         control_frame.pack(padx=10, pady=10, fill="both", expand=True)
 
-        # Crear un marco para la gráfica
         self.graph_frame = ttk.LabelFrame(self.root, text="Gráfica")
         self.graph_frame.pack(padx=10, pady=10, fill="both", expand=True)
 
-        # Crear etiquetas y campos de entrada para los parámetros
         ttk.Label(control_frame, text="Función f(t, y):").grid(row=0, column=0, padx=5, pady=5, sticky="e")
-        self.f_entry = ttk.Entry(control_frame, width=50)
-        self.f_entry.grid(row=0, column=1, padx=5, pady=5)
+        self.f_entry1 = ttk.Entry(control_frame, width=50)
+        self.f_entry1.grid(row=0, column=1, padx=5, pady=5)
 
-        ttk.Label(control_frame, text="Valor inicial t (a):").grid(row=1, column=0, padx=5, pady=5, sticky="e")
+        ttk.Label(control_frame, text="Función g(t, y):").grid(row=1, column=0, padx=5, pady=5, sticky="e")
+        self.f_entry2 = ttk.Entry(control_frame, width=50)
+        self.f_entry2.grid(row=1, column=1, padx=5, pady=5)
+
+        ttk.Label(control_frame, text="Función h(t, y):").grid(row=2, column=0, padx=5, pady=5, sticky="e")
+        self.f_entry3 = ttk.Entry(control_frame, width=50)
+        self.f_entry3.grid(row=2, column=1, padx=5, pady=5)
+
+        ttk.Label(control_frame, text="Valor inicial t (a):").grid(row=3, column=0, padx=5, pady=5, sticky="e")
         self.t0_entry = ttk.Entry(control_frame)
-        self.t0_entry.grid(row=1, column=1, padx=5, pady=5)
+        self.t0_entry.grid(row=3, column=1, padx=5, pady=5)
 
-        ttk.Label(control_frame, text="Valor final t (b):").grid(row=2, column=0, padx=5, pady=5, sticky="e")
+        ttk.Label(control_frame, text="Valor final t (b):").grid(row=4, column=0, padx=5, pady=5, sticky="e")
         self.tf_entry = ttk.Entry(control_frame)
-        self.tf_entry.grid(row=2, column=1, padx=5, pady=5)
+        self.tf_entry.grid(row=4, column=1, padx=5, pady=5)
 
-        ttk.Label(control_frame, text="Tamaño de paso h:").grid(row=3, column=0, padx=5, pady=5, sticky="e")
+        ttk.Label(control_frame, text="Tamaño de paso h:").grid(row=5, column=0, padx=5, pady=5, sticky="e")
         self.h_entry = ttk.Entry(control_frame)
-        self.h_entry.grid(row=3, column=1, padx=5, pady=5)
+        self.h_entry.grid(row=5, column=1, padx=5, pady=5)
 
-        ttk.Label(control_frame, text="Valor inicial y0 (separados por comas si son múltiples):").grid(row=4, column=0, padx=5, pady=5, sticky="e")
+        ttk.Label(control_frame, text="Valores iniciales y0 (separados por comas):").grid(row=6, column=0, padx=5, pady=5, sticky="e")
         self.y0_entry = ttk.Entry(control_frame)
-        self.y0_entry.grid(row=4, column=1, padx=5, pady=5)
+        self.y0_entry.grid(row=6, column=1, padx=5, pady=5)
 
-        # Crear botones para ejecutar las funciones
         self.runge_kutta_button = ttk.Button(control_frame, text="Runge Kutta", command=self.run_runge_kutta)
-        self.runge_kutta_button.grid(row=5, column=0, padx=5, pady=10, sticky="ew")
+        self.runge_kutta_button.grid(row=7, column=0, padx=5, pady=10, sticky="ew")
 
         self.euler_button = ttk.Button(control_frame, text="Euler", command=self.run_euler)
-        self.euler_button.grid(row=5, column=1, padx=5, pady=10, sticky="ew")
+        self.euler_button.grid(row=7, column=1, padx=5, pady=10, sticky="ew")
 
-        # Crear un widget Text para mostrar los resultados
         self.result_text = tk.Text(self.graph_frame, height=10, width=60)
         self.result_text.pack(side=tk.LEFT, fill="both", expand=True)
 
-        # Inicializar la variable del lienzo de la gráfica
         self.fig, self.ax = plt.subplots()
         self.canvas = FigureCanvasTkAgg(self.fig, master=self.graph_frame)
         self.canvas.get_tk_widget().pack(side=tk.RIGHT, fill="both", expand=True)
 
-    def plot_solution(self, t_vals, y_vals, method_name):
-        # Limpiar la gráfica
+    def plot_solution(self, t_vals, y_vals, method_names):
         self.ax.clear()
+        if t_vals and y_vals:
+            for i, method in enumerate(method_names):
+                self.ax.plot(t_vals[i], y_vals[i], label=f"Función {method}")
+            self.ax.set_xlabel('t')
+            self.ax.set_ylabel('y')
+            self.ax.set_title('Solución de Ecuaciones Diferenciales')
+            self.ax.legend()
+            self.canvas.draw()
+        else:
+            messagebox.showwarning("Advertencia", "No hay datos para graficar.")
 
-        # Graficar la solución
-        self.ax.plot(t_vals, y_vals, label=method_name)
-        self.ax.set_xlabel('t')
-        self.ax.set_ylabel('y')
-        self.ax.set_title(f'Solución usando {method_name}')
-        self.ax.legend()
-
-        # Actualizar el lienzo de tkinter
-        self.canvas.draw()
+    def parse_function(self, f_str):
+        try:
+            t, y = sp.symbols('t y')
+            locals_dict = {"sp": sp}
+            f_expr = sp.sympify(f_str, locals=locals_dict)
+            return sp.lambdify((t, y), f_expr, 'numpy')
+        except Exception as e:
+            messagebox.showerror("Error", f"Error en la función: {e}")
+            return None
 
     def run_runge_kutta(self):
+        f_str1 = self.f_entry1.get().strip()
+        f_str2 = self.f_entry2.get().strip()
+        f_str3 = self.f_entry3.get().strip()
         try:
-            # Obtener los valores de los campos de entrada
-            f_str = self.f_entry.get()
             t0 = float(self.t0_entry.get())
             tf = float(self.tf_entry.get())
             h = float(self.h_entry.get())
             y0 = list(map(float, self.y0_entry.get().split(',')))
+        except ValueError as e:
+            messagebox.showerror("Error", f"Error en los valores numéricos: {e}")
+            return
 
-            # Convertir la cadena de texto en una función
-            t, y = sp.symbols('t y')  # Define los símbolos
-            f_expr = sp.sympify(f_str)  # Convierte la cadena en una expresión sympy
-            f_lambda = sp.lambdify((t, y), f_expr, modules=['numpy'])  # Convierte la expresión en una función lambda
+        functions = []
+        method_names = []
+        initial_values = []
 
-            # Ejecutar la función RungeKutta y mostrar los resultados
-            t_vals, y_vals = RungeKutta(f_lambda, t0, tf, h, y0)
-            self.result_text.delete(1.0, tk.END)
-            self.result_text.insert(tk.END, f"t: {t_vals}\n\ny: {y_vals}\n")
-            self.plot_solution(t_vals, y_vals, "Runge Kutta")
+        if f_str1:
+            f_lambda1 = self.parse_function(f_str1)
+            if f_lambda1:
+                functions.append(f_lambda1)
+                method_names.append("f1")
+                initial_values.append(y0[0])
+        if f_str2:
+            f_lambda2 = self.parse_function(f_str2)
+            if f_lambda2:
+                functions.append(f_lambda2)
+                method_names.append("f2")
+                initial_values.append(y0[1])
+        if f_str3:
+            f_lambda3 = self.parse_function(f_str3)
+            if f_lambda3:
+                functions.append(f_lambda3)
+                method_names.append("f3")
+                initial_values.append(y0[2])
 
-        except Exception as e:
-            messagebox.showerror("Error", str(e))
+        if not functions:
+            messagebox.showerror("Error", "No se proporcionaron funciones válidas.")
+            return
+
+        t_vals, y_vals = [], []
+        for func, y0_val in zip(functions, initial_values):
+            t_val, y_val = RungeKutta(func, t0, tf, h, [y0_val])
+            t_vals.append(t_val)
+            y_vals.append(y_val)
+
+        self.result_text.delete(1.0, tk.END)
+        self.result_text.insert(tk.END, f"t: {t_vals}\n\ny: {y_vals}\n")
+        self.plot_solution(t_vals, y_vals, method_names)
 
     def run_euler(self):
+        f_str1 = self.f_entry1.get().strip()
+        f_str2 = self.f_entry2.get().strip()
+        f_str3 = self.f_entry3.get().strip()
         try:
-            # Obtener los valores de los campos de entrada
-            f_str = self.f_entry.get()
             t0 = float(self.t0_entry.get())
             tf = float(self.tf_entry.get())
             h = float(self.h_entry.get())
             y0 = list(map(float, self.y0_entry.get().split(',')))
+        except ValueError as e:
+            messagebox.showerror("Error", f"Error en los valores numéricos: {e}")
+            return
 
-            # Convertir la cadena de texto en una función
-            t, y = sp.symbols('t y')
-            f_expr = sp.sympify(f_str)
-            f_lambda = sp.lambdify((t, y), f_expr, 'numpy')
+        functions = []
+        method_names = []
+        initial_values = []
 
-            # Ejecutar la función Euler y mostrar los resultados
-            t_vals, y_vals = Euler(f_lambda, t0, tf, h, y0)
-            self.result_text.delete(1.0, tk.END)
-            self.result_text.insert(tk.END, f"Resultados de Euler:\nt: {t_vals}\ny: {y_vals}\n")
-            self.plot_solution(t_vals, y_vals, "Euler")
+        if f_str1:
+            f_lambda1 = self.parse_function(f_str1)
+            if f_lambda1:
+                functions.append(f_lambda1)
+                method_names.append("f1")
+                initial_values.append(y0[0])
+        if f_str2:
+            f_lambda2 = self.parse_function(f_str2)
+            if f_lambda2:
+                functions.append(f_lambda2)
+                method_names.append("f2")
+                initial_values.append(y0[1])
+        if f_str3:
+            f_lambda3 = self.parse_function(f_str3)
+            if f_lambda3:
+                functions.append(f_lambda3)
+                method_names.append("f3")
+                initial_values.append(y0[2])
 
-        except Exception as e:
-            messagebox.showerror("Error", str(e))
+        if not functions:
+            messagebox.showerror("Error", "No se proporcionaron funciones válidas.")
+            return
+
+        t_vals, y_vals = [], []
+        for func, y0_val in zip(functions, initial_values):
+            t_val, y_val = Euler(func, t0, tf, h, [y0_val])
+            t_vals.append(t_val)
+            y_vals.append(y_val)
+
+        self.result_text.delete(1.0, tk.END)
+        self.result_text.insert(tk.END, f"t: {t_vals}\n\ny: {y_vals}\n")
+        self.plot_solution(t_vals, y_vals, method_names)
+
+if __name__ == "__main__":
+    root = tk.Tk()
+    app = DifferentialEquationsApp(root)
+    root.mainloop()
+
 
 
 
