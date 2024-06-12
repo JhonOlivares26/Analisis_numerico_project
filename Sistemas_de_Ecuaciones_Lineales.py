@@ -2,48 +2,50 @@ import time
 import numpy as np
 from scipy.linalg import eigvals
 
-def Gauss_seidel(a,b,xo,tol=1e-6):
-  D=np.diag(np.diag(a))
-  L=D-np.tril(a)
-  U=D-np.triu(a)
-  Tg=np.dot(np.linalg.inv(D-L),U)
-  Cg=np.dot(np.linalg.inv(D-L),b)
-  lam,vec=np.linalg.eig(Tg)
-  radio=max(abs(lam))
-  if radio<1:
-    x1=np.dot(Tg,xo)+Cg
-    iteraciones = 1
-    while max(np.abs((x1 - xo)))>tol:
-        xo=x1
-        x1=np.dot(Tg,xo)+Cg
-        iteraciones+=1
-    return x1
-  else:
-    print("El sistema iterativo no converge a la solucion unica del sistema")
+
+def Gauss_seidel(a, b, xo, tol=1e-6):
+    D = np.diag(np.diag(a))
+    L = D - np.tril(a)
+    U = D - np.triu(a)
+    Tg = np.dot(np.linalg.inv(D - L), U)
+    Cg = np.dot(np.linalg.inv(D - L), b)
+    lam, vec = np.linalg.eig(Tg)
+    radio = max(abs(lam))
+    if radio < 1:
+        x1 = np.dot(Tg, xo) + Cg
+        iteraciones = 1
+        while max(np.abs((x1 - xo))) > tol:
+            xo = x1
+            x1 = np.dot(Tg, xo) + Cg
+            iteraciones += 1
+        return x1
+    else:
+        print("El sistema iterativo no converge a la solucion unica del sistema")
 
 
-def Gauss_seidel_time(a,b,xo,tol=1e-6):
-  D=np.diag(np.diag(a))
-  L=D-np.tril(a)
-  U=D-np.triu(a)
-  Tg=np.dot(np.linalg.inv(D-L),U)
-  Cg=np.dot(np.linalg.inv(D-L),b)
-  lam,vec=np.linalg.eig(Tg)
-  radio=max(abs(lam))
-  if radio<1:
-    x1=np.dot(Tg,xo)+Cg
-    iteraciones = 1
-    start_time = time.time()
-    while max(np.abs((x1 - xo)))>tol:
-        xo=x1
-        x1=np.dot(Tg,xo)+Cg
-        iteraciones+=1
-    end_time = time.time()
-    execution_time = end_time - start_time
-    print(f"El tiempo de computo fue de {execution_time}")
-    return x1
-  else:
-    print("El sistema iterativo no converge a la solucion unica del sistema")
+def Gauss_seidel_time(a, b, xo, tol=1e-6):
+    D = np.diag(np.diag(a))
+    L = D - np.tril(a)
+    U = D - np.triu(a)
+    Tg = np.dot(np.linalg.inv(D - L), U)
+    Cg = np.dot(np.linalg.inv(D - L), b)
+    lam, vec = np.linalg.eig(Tg)
+    radio = max(abs(lam))
+    if radio < 1:
+        x1 = np.dot(Tg, xo) + Cg
+        iteraciones = 1
+        start_time = time.time()
+        while max(np.abs((x1 - xo))) > tol:
+            xo = x1
+            x1 = np.dot(Tg, xo) + Cg
+            iteraciones += 1
+        end_time = time.time()
+        execution_time = end_time - start_time
+        print(f"El tiempo de computo fue de {execution_time}")
+        return x1
+    else:
+        print("El sistema iterativo no converge a la solucion unica del sistema")
+
 
 def Gauss_sum_time(A, B, X0, tol=1e-6):
     n = len(B)
@@ -69,6 +71,7 @@ def Gauss_sum_time(A, B, X0, tol=1e-6):
         print("El método no convergió en el número máximo de iteraciones.")
     return f"La solución del sistema es: {X1}, con {cont} iteracciones"
 
+
 def Gauss_sum_errores(A, B, X0, tol=1e-6):
     n = len(B)
     norm = tol + 1
@@ -91,24 +94,24 @@ def Gauss_sum_errores(A, B, X0, tol=1e-6):
         print("El método no convergió en el número máximo de iteraciones.")
     return X1, iteracciones_sumas, errores_sumas
 
-def Gauss_seidel_errores(a,b,x0,tol=1e-6):
-  D=np.diag(np.diag(a))
-  L=D-np.tril(a)
-  U=D-np.triu(a)
-  Tg=np.dot(np.linalg.inv(D-L),U)
-  Cg=np.dot(np.linalg.inv(D-L),b)
-  lam,vec=np.linalg.eig(Tg)
-  radio=max(abs(lam))
-  if radio<1:
-    x1=np.dot(Tg,x0)+Cg
-    errores_seidel = [np.max(np.abs(x1 - x0))]
-    iteracciones_seidel = 1
-    while max(np.abs((x1 - x0)))>tol:
-        x0=x1
-        x1=np.dot(Tg,x0)+Cg
-        errores_seidel.append(np.max(np.abs(x1 - x0)))
-        iteracciones_seidel+=1
-    return x1, iteracciones_seidel, errores_seidel
-  else:
-    print("El sistema iterativo no converge a la solucion unica del sistema")
 
+def Gauss_seidel_errores(a, b, x0, tol=1e-6):
+    D = np.diag(np.diag(a))
+    L = D - np.tril(a)
+    U = D - np.triu(a)
+    Tg = np.dot(np.linalg.inv(D - L), U)
+    Cg = np.dot(np.linalg.inv(D - L), b)
+    lam, vec = np.linalg.eig(Tg)
+    radio = max(abs(lam))
+    if radio < 1:
+        x1 = np.dot(Tg, x0) + Cg
+        errores_seidel = [np.max(np.abs(x1 - x0))]
+        iteracciones_seidel = 1
+        while max(np.abs((x1 - x0))) > tol:
+            x0 = x1
+            x1 = np.dot(Tg, x0) + Cg
+            errores_seidel.append(np.max(np.abs(x1 - x0)))
+            iteracciones_seidel += 1
+        return x1, iteracciones_seidel, errores_seidel
+    else:
+        print("El sistema iterativo no converge a la solucion unica del sistema")
