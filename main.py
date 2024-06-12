@@ -34,11 +34,11 @@ class MainApp:
         button5 = tk.Button(root, text="Ecuaciones Diferenciales", command=self.open_differential_equations_app)
 
         # Posicionar los botones
-        button1.pack()
-        button2.pack()
-        button3.pack()
-        button4.pack()
-        button5.pack()
+        button1.pack(pady=10)
+        button2.pack(pady=10)
+        button3.pack(pady=10)
+        button4.pack(pady=10)
+        button5.pack(pady=10)
 
     def open_differential_equations_app(self):
         # Crear una nueva ventana
