@@ -1,4 +1,5 @@
 import tkinter as tk
+from tkinter import ttk, messagebox
 import sympy as sp
 import numpy as np
 import math
@@ -68,40 +69,55 @@ class CerosDeFuncionesApp:
     def __init__(self, root):
         self.root = root
         self.root.title("Ceros de Funciones")
-        root.geometry("600x600")
+        
+        self.create_widgets()
 
-        self.f_entry = tk.Entry(root, width=50)
-        self.a_entry = tk.Entry(root)
-        self.b_entry = tk.Entry(root)
-        self.tol_entry = tk.Entry(root)
-        self.x0_entry = tk.Entry(root)
-        self.xi_entry = tk.Entry(root)
+    def create_widgets(self):
+        self.input_frame = ttk.LabelFrame(self.root, text="Informacion de uso")
+        self.input_frame.pack(padx=10, pady=10, fill="x")
 
-        tk.Label(root, text="Función (en términos de x):").pack()
-        self.f_entry.pack()
-        tk.Label(root, text="a (para Biseccion y Falsa posicion):").pack()
-        self.a_entry.pack()
-        tk.Label(root, text="b (para Biseccion y Falsa posicion):").pack()
-        self.b_entry.pack()
-        tk.Label(root, text="Tolerancia:").pack()
-        self.tol_entry.pack()
-        tk.Label(root, text="x0 (para Newton y Secante):").pack()
-        self.x0_entry.pack()
-        tk.Label(root, text="xi (para Secante):").pack()
-        self.xi_entry.pack()
+        ttk.Label(self.input_frame, text="La funcion se debe ingresar con los datos completa y las incognitas en terminos de X (ejemplo: 2*x + 4*x), \n para ingresar exponenciales, logaritmos,etc, se recomienda Sympy con el prefijo sp(ej sp.exp(x))").grid(row=0, column=0, padx=5, pady=5, sticky="e")
+        ttk.Label(self.input_frame, text="El programa para calcular con newton,para el valor X0 se calcula el promedio que se ingrese en los campos a y b,\n para secante, el valor X0 y X1 son los valores ingresados en a y b respectivamente").grid(row=2, column=0, padx=5, pady=5, sticky="e") 
 
-        self.biseccion_button = tk.Button(root, text="Bisección", command=self.run_biseccion)
-        self.newton_button = tk.Button(root, text="Newton", command=self.run_newton)
-        self.posicion_falsa_button = tk.Button(root, text="Posición Falsa", command=self.run_posicion_falsa)
-        self.secante_button = tk.Button(root, text="Secante", command=self.run_secante)
+        self.input_frame = ttk.LabelFrame(self.root, text="Datos de Entrada")
+        self.input_frame.pack(padx=10, pady=10, fill="x")
 
-        self.biseccion_button.pack(pady=5)
-        self.newton_button.pack(pady=5)
-        self.posicion_falsa_button.pack(pady=5)
-        self.secante_button.pack(pady=5)
+        ttk.Label(self.input_frame, text="Función (en términos de x):").grid(row=0, column=0, padx=5, pady=5, sticky="e")
+        self.f_entry = ttk.Entry(self.input_frame, width=50)
+        self.f_entry.grid(row=0, column=1, padx=5, pady=5)
 
-        self.result_text = tk.Text(root, height=10, width=70)
-        self.result_text.pack(pady=10)
+        ttk.Label(self.input_frame, text="Valor de a:").grid(row=1, column=0, padx=5, pady=5, sticky="e")
+        self.a_entry = ttk.Entry(self.input_frame)
+        self.a_entry.grid(row=1, column=1, padx=5, pady=5)
+
+        ttk.Label(self.input_frame, text="Valor de b:").grid(row=2, column=0, padx=5, pady=5, sticky="e")
+        self.b_entry = ttk.Entry(self.input_frame)
+        self.b_entry.grid(row=2, column=1, padx=5, pady=5)
+
+        ttk.Label(self.input_frame, text="Tolerancia:").grid(row=3, column=0, padx=5, pady=5, sticky="e")
+        self.tol_entry = ttk.Entry(self.input_frame)
+        self.tol_entry.grid(row=3, column=1, padx=5, pady=5)
+
+        self.button_frame = ttk.Frame(self.root)
+        self.button_frame.pack(padx=10, pady=10, fill="x")
+
+        self.biseccion_button = ttk.Button(self.button_frame, text="Bisección", command=self.run_biseccion)
+        self.biseccion_button.grid(row=0, column=0, padx=5, pady=5)
+
+        self.newton_button = ttk.Button(self.button_frame, text="Newton", command=self.run_newton)
+        self.newton_button.grid(row=0, column=1, padx=5, pady=5)
+
+        self.posicion_falsa_button = ttk.Button(self.button_frame, text="Posición Falsa", command=self.run_posicion_falsa)
+        self.posicion_falsa_button.grid(row=0, column=2, padx=5, pady=5)
+
+        self.secante_button = ttk.Button(self.button_frame, text="Secante", command=self.run_secante)
+        self.secante_button.grid(row=0, column=3, padx=5, pady=5)
+
+        self.output_frame = ttk.LabelFrame(self.root, text="Resultados")
+        self.output_frame.pack(padx=10, pady=10, fill="both", expand=True)
+
+        self.result_text = tk.Text(self.output_frame, height=10, width=70)
+        self.result_text.pack(padx=5, pady=5, fill="both", expand=True)
 
     def run_biseccion(self):
         self.result_text.delete(1.0, tk.END)
@@ -111,19 +127,19 @@ class CerosDeFuncionesApp:
             b = float(self.b_entry.get())
             tol = float(self.tol_entry.get())
             result = biseccion(f, a, b, tol)
-        except ValueError as e:
-            result = f"Error de valor: {e}"
+        except Exception as e:
+            result = f"Error: {str(e)}"
         self.result_text.insert(tk.END, result)
 
     def run_newton(self):
         self.result_text.delete(1.0, tk.END)
         try:
             f_expr = self.get_function_expr()
-            x0 = float(self.x0_entry.get())
+            x0 = (float(self.a_entry.get()) + float(self.b_entry.get())) / 2
             tol = float(self.tol_entry.get())
             result = newton(f_expr, x0, tol)
-        except ValueError as e:
-            result = f"Error de valor: {e}"
+        except Exception as e:
+            result = f"Error: {str(e)}"
         self.result_text.insert(tk.END, result)
 
     def run_posicion_falsa(self):
@@ -134,20 +150,20 @@ class CerosDeFuncionesApp:
             b = float(self.b_entry.get())
             tol = float(self.tol_entry.get())
             result = posicion_falsa(f, a, b, tol)
-        except ValueError as e:
-            result = f"Error de valor: {e}"
+        except Exception as e:
+            result = f"Error: {str(e)}"
         self.result_text.insert(tk.END, result)
 
     def run_secante(self):
         self.result_text.delete(1.0, tk.END)
         try:
             f = self.get_function()
-            x0 = float(self.x0_entry.get())
-            xi = float(self.xi_entry.get())
+            x0 = float(self.a_entry.get())
+            x1 = float(self.b_entry.get())
             tol = float(self.tol_entry.get())
-            result = secante(f, x0, xi, tol)
-        except ValueError as e:
-            result = f"Error de valor: {e}"
+            result = secante(f, x0, x1, tol)
+        except Exception as e:
+            result = f"Error: {str(e)}"
         self.result_text.insert(tk.END, result)
 
     def get_function(self):
